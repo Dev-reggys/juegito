@@ -3,11 +3,11 @@ let modoRegistro = false;
 let currentUser = "";
 let usuarios = JSON.parse(localStorage.getItem('usuarios_arcade')) || {};
 let canvas, ctx, scoreElement, animationId, currentGameInterval;
-let currentRunningGame = ""; // 👈 NUEVO: Guarda qué juego estamos jugando
+let currentRunningGame = ""; // Guarda el juego activo para reintentos
 
 // CONTROL DE MÚSICA
 function stopAllMusic() {
-    const themes = ['snaketheme', 'geometrytheme', 'tetristheme', 'dinotheme'];
+    const themes = ['snaketheme', 'geometrytheme', 'tetristheme', 'dinotheme', 'menutheme'];
     themes.forEach(id => {
         const audio = document.getElementById(id);
         if (audio) {
@@ -15,6 +15,13 @@ function stopAllMusic() {
             audio.currentTime = 0;
         }
     });
+}
+
+function playMenuMusic() {
+    const menuMusic = document.getElementById('menutheme');
+    if (menuMusic) {
+        menuMusic.play().catch(e => console.log("El navegador requiere interacción previa para sonar."));
+    }
 }
 
 // LOGIN Y REGISTRO
@@ -32,14 +39,21 @@ function ejecutarAuth() {
     const pass = document.getElementById('password').value.trim();
     const msg = document.getElementById('auth-msg');
 
-    if (!user || !pass) { msg.style.color = "#ff4141"; msg.innerText = "Error: Campos vacíos"; return; }
+    if (!user || !pass) { 
+        msg.style.color = "#ff4141"; 
+        msg.innerText = "Error: Campos vacíos"; 
+        return; 
+    }
 
     if (modoRegistro) {
-        if (usuarios[user]) { msg.style.color = "#ff4141"; msg.innerText = "El usuario ya existe"; } 
-        else {
+        if (usuarios[user]) { 
+            msg.style.color = "#ff4141"; 
+            msg.innerText = "El usuario ya existe"; 
+        } else {
             usuarios[user] = pass;
             localStorage.setItem('usuarios_arcade', JSON.stringify(usuarios));
-            msg.style.color = "#00ff41"; msg.innerText = "¡Registro exitoso!";
+            msg.style.color = "#00ff41"; 
+            msg.innerText = "¡Registro exitoso!";
             setTimeout(() => { alternarModoAuth(); }, 1200);
         }
     } else {
@@ -47,23 +61,25 @@ function ejecutarAuth() {
             currentUser = user;
             document.getElementById('login-overlay').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
+            playMenuMusic();
         } else {
-            msg.style.color = "#ff4141"; msg.innerText = "Usuario o clave incorrectos";
+            msg.style.color = "#ff4141"; 
+            msg.innerText = "Usuario o clave incorrectos";
         }
     }
 }
 
 // CONTROL DE JUEGOS
 function startGame(gameType) {
-    currentRunningGame = gameType; // 👈 Guardamos el tipo de juego activo
+    currentRunningGame = gameType;
     
     if (animationId) cancelAnimationFrame(animationId);
-    if (currentGameInterval) clearTimeout(currentGameInterval);
+    if (currentGameInterval) clearInterval(currentGameInterval);
 
     document.getElementById("welcome-msg").classList.add("hidden");
     document.getElementById("char-menu").classList.add("hidden");
     document.getElementById("game-layout").classList.remove("hidden");
-    document.getElementById('game-over-modal').classList.add('hidden'); // Esconder modal si estaba abierto
+    document.getElementById('game-over-modal').classList.add('hidden');
     
     canvas = document.getElementById("mainCanvas");
     ctx = canvas.getContext("2d");
@@ -77,6 +93,7 @@ function startGame(gameType) {
     const theme = document.getElementById(gameType + "theme");
     if (theme) theme.play();
 
+    // Iniciar el script específico del juego
     switch(gameType) {
         case 'snake':
             document.getElementById("game-title").innerText = "SNAKE NEON";
@@ -93,8 +110,16 @@ function startGame(gameType) {
     }
 }
 
+// DINO RUN
+function showDinoCharacters() {
+    document.getElementById("welcome-msg").classList.add("hidden");
+    document.getElementById("game-layout").classList.add("hidden");
+    document.getElementById("char-menu").classList.remove("hidden");
+    document.getElementById('game-over-modal').classList.add('hidden');
+}
+
 function startDino(avatar) {
-    currentRunningGame = 'dino'; // 👈 Guardamos que es Dino
+    currentRunningGame = 'dino';
     if (animationId) cancelAnimationFrame(animationId);
     
     canvas = document.getElementById("mainCanvas");
@@ -104,7 +129,6 @@ function startDino(avatar) {
 
     document.getElementById("char-menu").classList.add("hidden");
     document.getElementById("game-layout").classList.remove("hidden");
-    document.getElementById('game-over-modal').classList.add('hidden');
     document.getElementById("game-title").innerText = "DINO: " + avatar;
     
     stopAllMusic();
@@ -114,8 +138,7 @@ function startDino(avatar) {
     if (typeof initDino === "function") initDino(avatar);
 }
 
-// --- CORRECCIÓN DE GAME OVER Y MENÚS ---
-
+// SISTEMA DE GAME OVER
 function mostrarGameOver(puntos) {
     stopAllMusic();
     const modal = document.getElementById('game-over-modal');
@@ -125,35 +148,24 @@ function mostrarGameOver(puntos) {
     if (modal) modal.classList.remove('hidden');
 }
 
-// Botón Reintentar: Reinicia el juego actual sin recargar la página
 function reintentarJuego() {
+    document.getElementById('game-over-modal').classList.add('hidden');
     if (currentRunningGame === 'dino') {
-        // Para Dino, volvemos a mostrar el menú de personajes o el último avatar
-        showDinoCharacters(); 
-    } else {
+        showDinoCharacters();
+    } else if (currentRunningGame) {
         startGame(currentRunningGame);
     }
 }
 
-// Botón Volver al Menú: Limpia el canvas y vuelve a la selección de juegos
 function volverAlMenu() {
     stopAllMusic();
     document.getElementById('game-over-modal').classList.add('hidden');
     document.getElementById("game-layout").classList.add("hidden");
+    document.getElementById("char-menu").classList.add("hidden");
     document.getElementById("welcome-msg").classList.remove("hidden");
-    
-    // Limpiar canvas
-    if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    playMenuMusic();
 }
 
-// Solo para el botón de salir de la cuenta
 function logout() { 
     location.reload(); 
-}
-
-function showDinoCharacters() {
-    document.getElementById("welcome-msg").classList.add("hidden");
-    document.getElementById("game-layout").classList.add("hidden");
-    document.getElementById('game-over-modal').classList.add('hidden');
-    document.getElementById("char-menu").classList.remove("hidden");
 }
