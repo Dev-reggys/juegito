@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Gemini Master</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="login-overlay" class="overlay">
+        <div class="login-box">
+            <h1 id="auth-title">LOGIN</h1>
+            <input type="text" id="username" placeholder="Usuario" autocomplete="off">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button id="auth-main-btn" onclick="ejecutarAuth()">ENTRAR AL ARCADE</button>
+            <p id="auth-msg"></p>
+            <div class="auth-switch">
+                <span id="switch-text">¿No tienes cuenta?</span>
+                <button class="btn-link" id="switch-btn" onclick="alternarModoAuth()">Regístrate aquí</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-over-modal" class="overlay hidden">
+    <div class="modal-box">
+        <h2 class="rainbow-text" style="font-size: 3rem; margin-bottom: 10px;">GAME OVER</h2>
+        <p>PUNTUACIÓN FINAL:</p>
+        <h3 id="final-score" style="font-size: 2.5rem; color: #00fbff; margin: 15px 0;">0</h3>
+        <button class="btn-neon" onclick="reintentarJuego()">REINTENTAR</button>
+<button class="btn-link" onclick="volverAlMenu()">VOLVER AL MENÚ</button>
+    </div>
+</div>
+
+    <div id="main-app" class="hidden">
+        <aside class="sidebar">
+            <h2 class="rainbow-text-small">ARCADE GEMINI</h2>
+            <button onclick="startGame('snake')">🐍 SNAKE NEON</button>
+            <button onclick="startGame('geometry')">🤖 ROBOT PARKOUR</button>
+            <button onclick="startGame('tetris')">🧱 TETRIS CLASSIC</button>
+            <button onclick="showDinoCharacters()">🦖 DINO RUN</button>
+            <button class="btn-logout" onclick="logout()">🚪 CERRAR SESIÓN</button>
+        </aside>
+
+        <main class="content">
+            <div id="welcome-msg">
+                <h1 class="rainbow-text">BIENVENIDO</h1>
+                <div class="gif-container">
+                    <img src="src/cat.gif" alt="Gato Arcade" class="welcome-gif">
+                </div>
+                <p>SELECCIONA UN JUEGO PARA EMPEZAR</p>
+            </div>
+
+            <div id="game-layout" class="hidden">
+                <div id="stats-container">
+                    <span id="game-title"></span>
+                    <span id="score-label">SCORE: <span id="score">0</span></span>
+                </div>
+                <canvas id="mainCanvas" width="400" height="400"></canvas>
+                <div class="ranking-box">
+                    <h3>TOP SCORERS</h3>
+                    <ul id="ranking-list"></ul>
+                </div>
+            </div>
+
+            <div id="char-menu" class="hidden">
+                <h2 class="rainbow-text-small">ELIGE TU PERSONAJE</h2>
+                <div class="char-grid">
+                    <div class="char-card" onclick="startDino('🦖')"><span>🦖</span></div>
+                    <div class="char-card" onclick="startDino('🤖')"><span>🤖</span></div>
+                    <div class="char-card" onclick="startDino('🐱')"><span>🐱</span></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+   <audio id="snaketheme" src="src/snaketheme.mp3" loop></audio>
+    <audio id="geometrytheme" src="src/geometrytheme.mp3" loop></audio>
+    <audio id="tetristheme" src="src/tetristheme.mp3" loop></audio>
+    <audio id="dinotheme" src="src/dinotheme.mp3" loop></audio>
+
+    <script src="script.js"></script>
+    <script src="snake.js"></script>
+    <script src="geometry.js"></script>
+    <script src="tetrix.js"></script>
+    <script src="dino.js"></script>
+</body>
+</html>
