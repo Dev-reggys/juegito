@@ -15,120 +15,98 @@
     100% { background-position: 200% center; }
 }
 
-@keyframes blinker {
-    50% { opacity: 0; }
+/* Animación de pulso para el DASH (Integración) */
+@keyframes beatHit {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.02); filter: brightness(1.4); }
+    100% { transform: scale(1); filter: brightness(1); }
 }
 
-/* --- RESET Y ESTÉTICA 8-BIT --- */
+/* --- RESET Y ESTRUCTURA BASE --- */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Press Start 2P', cursive;
-    image-rendering: pixelated;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 body {
-    background-color: #1a1a1a; 
+    background-color: #050505;
     color: #fff;
     overflow: hidden;
     height: 100vh;
     width: 100vw;
-    font-size: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .hidden { display: none !important; }
 
-/* --- LOGIN Y MODALES --- */
+/* --- SISTEMA DE CAPAS Y LOGIN --- */
 .overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
+    background: #000;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
 }
 
-.login-box, .modal-box {
-    background: #000;
-    padding: 60px 40px;
+.login-box {
+    background: #050505;
+    padding: 40px;
     text-align: center;
-    width: 450px;
-    border: 6px solid transparent;
+    width: 380px;
+    border: 4px solid transparent;
     border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
     animation: rotateGradient 4s linear infinite;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
 }
 
-/* --- BOTONES ARCADE --- */
-button, .btn-neon {
-    padding: 18px 25px;
-    background: #0a0a0a;
-    color: #fff;
-    border: 4px solid #fff;
-    font-size: 10px;
-    cursor: pointer;
-    transition: 0.1s;
-    text-transform: uppercase;
+.login-box h1 {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, purple, red);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowSweep 3s linear infinite;
 }
 
-button:hover {
-    background: #fff;
-    color: #000;
-    box-shadow: 5px 5px 0px #00ff41;
-    transform: translate(-3px, -3px);
-}
-
-/* --- SELECCIÓN DE PERSONAJE DINO (CORREGIDO) --- */
-#char-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.login-box input {
+    display: block;
     width: 100%;
-}
-
-.char-grid {
-    display: flex;
-    gap: 30px; /* Espacio entre personajes */
-    margin: 40px 0;
-    justify-content: center;
-}
-
-.char-card {
-    width: 120px;
-    height: 120px;
+    margin-bottom: 15px;
+    padding: 12px;
     background: #111;
-    border: 4px solid #fff; /* Borde blanco pixel */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 4rem; /* Emoji grande */
+    border: 1px solid #333;
+    color: #fff;
+    outline: none;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
-    box-shadow: 8px 8px 0px #333;
 }
 
-.char-card:hover {
-    border-color: #00ff41;
-    transform: scale(1.1) translateY(-10px);
-    box-shadow: 10px 10px 0px #00551a;
+.login-box button:hover { background: #fff; color: #000; }
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #00fbff;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 5px;
 }
 
-.char-card span {
-    display: block;
-    line-height: 1;
-}
-
-/* --- SIDEBAR Y LAYOUT --- */
+/* --- INTERFAZ PRINCIPAL --- */
 #main-app {
     display: flex;
     height: 100vh;
@@ -136,20 +114,52 @@ button:hover {
 }
 
 .sidebar {
-    width: 280px;
+    width: 260px;
     background: #000;
     display: flex;
     flex-direction: column;
     padding: 20px;
     gap: 15px;
-    border-right: 6px solid transparent;
+    border-right: 5px solid transparent;
     border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
     animation: rotateGradient 4s linear infinite;
 }
 
+.sidebar h2 {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #222;
+}
+
+.sidebar button {
+    background: #0a0a0a;
+    color: #eee;
+    border: 1px solid #222;
+    padding: 15px;
+    font-size: 1rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.sidebar button:hover {
+    background: #111;
+    border-color: #00fbff;
+    transform: translateX(10px);
+    box-shadow: -5px 0 10px rgba(0, 251, 255, 0.2);
+}
+
+.btn-logout { margin-top: auto; border-color: #ff4141 !important; color: #ff4141 !important; }
+
 .content {
     flex: 1;
-    background: #1a1a1a;
+    background: #080808;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -157,20 +167,139 @@ button:hover {
     position: relative;
 }
 
+/* --- ZONA DE CANVAS Y RANKING --- */
+#game-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Efecto de pulso cuando hay música (DASH) */
+.canvas-container.beat {
+    animation: beatHit 0.1s ease-out;
+}
+
+#stats-container {
+    width: 400px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #00fbff;
+    text-shadow: 0 0 8px rgba(0, 251, 255, 0.5);
+}
+
+.canvas-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    /* Integramos tu borde rotativo aquí también */
+    border: 4px solid transparent;
+    border-image: conic-gradient(from var(--angle), aqua, blue, magenta, red, yellow, lime, aqua) 1;
+    animation: rotateGradient 4s linear infinite;
+}
+
+canvas {
+    background: #000;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- CONTROLES DE GUITARRA --- */
+#guitar-controls {
+    position: absolute;
+    bottom: 35px; 
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 10px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.lane-trigger {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: 900;
+    background: rgba(0, 0, 0, 0.8);
+    transition: all 0.05s ease;
+}
+
+#key-a { border-color: #ff4141; color: #ff4141; box-shadow: 0 0 15px rgba(255, 65, 65, 0.3); }
+#key-s { border-color: #ffea00; color: #ffea00; box-shadow: 0 0 15px rgba(255, 234, 0, 0.3); }
+#key-d { border-color: #00ff41; color: #00ff41; box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); }
+#key-f { border-color: #00fbff; color: #00fbff; box-shadow: 0 0 15px rgba(0, 251, 255, 0.3); }
+
+.lane-trigger.active {
+    transform: scale(1.15) translateY(-5px);
+    background: #fff;
+    color: #000 !important;
+    box-shadow: 0 0 30px #fff;
+}
+
+/* --- RANKING Y MODALES --- */
+.ranking-box {
+    margin-top: 25px;
+    width: 400px;
+    padding: 20px;
+    background: #000;
+    border: 3px solid transparent;
+    border-image: conic-gradient(from var(--angle), magenta, blue, aqua, lime, yellow, red, magenta) 1;
+    animation: rotateGradient 4s linear infinite;
+}
+
+.modal-box {
+    background-color: rgba(0, 15, 20, 0.95);
+    border: 3px solid #00ff41;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 20px #00ff41, inset 0 0 15px #00ff41;
+    color: white;
+}
+
+.btn-neon {
+    background-color: transparent;
+    color: #00ff41;
+    border: 2px solid #00ff41;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s ease;
+}
+
+.btn-neon:hover {
+    background-color: #00ff41;
+    color: #000;
+    box-shadow: 0 0 10px #00ff41;
+}
+
 .rainbow-text {
-    font-size: 2.2rem;
+    font-size: 4rem;
+    font-weight: 900;
+    background: linear-gradient(to right, red, orange, yellow, lime, cyan, blue, violet, red);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowSweep 2.5s linear infinite;
+}
+
+.rainbow-text-small {
+    font-size: 1.5rem;
+    font-weight: bold;
     background: linear-gradient(to right, red, orange, yellow, lime, cyan, blue, violet, red);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: rainbowSweep 3s linear infinite;
-    margin-bottom: 20px;
-}
-
-/* Botón Volver en el menú de personajes */
-#char-menu .btn-link {
-    margin-top: 20px;
-    color: #ff00ff;
-    text-decoration: none;
-    font-size: 12px;
 }

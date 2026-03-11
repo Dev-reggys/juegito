@@ -3,48 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Gemini Master - 8-BIT EDITION</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
+    <title>Arcade Gemini Master</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="login-overlay" class="overlay">
-        <div class="modal-box"> <h1 id="auth-title">LOGIN</h1>
-            <input type="text" id="username" placeholder="USUARIO" autocomplete="off">
-            <input type="password" id="password" placeholder="CONTRASEÑA">
+        <div class="login-box">
+            <h1 id="auth-title">LOGIN</h1>
+            <input type="text" id="username" placeholder="Usuario" autocomplete="off">
+            <input type="password" id="password" placeholder="Contraseña">
             <button id="auth-main-btn" onclick="ejecutarAuth()">ENTRAR AL ARCADE</button>
-            
+            <p id="auth-msg"></p>
             <div class="auth-switch">
                 <span id="switch-text">¿No tienes cuenta?</span>
                 <button class="btn-link" id="switch-btn" onclick="alternarModoAuth()">Regístrate aquí</button>
             </div>
-            <p id="auth-msg"></p>
         </div>
     </div>
 
     <div id="game-over-modal" class="overlay hidden">
         <div class="modal-box">
-            <h2 class="rainbow-text blink" style="font-size: 2.5rem; margin-bottom: 10px;">GAME OVER</h2>
-            <p style="margin-top: 20px;">PUNTUACIÓN FINAL</p>
-            <h3 id="final-score" style="font-size: 3rem; color: #ffea00; margin: 15px 0; text-shadow: 4px 4px #000;">0</h3>
-            
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="btn-neon" onclick="reintentarJuego()">REINTENTAR</button>
-                <button class="btn-link" onclick="volverAlMenu()">VOLVER AL MENÚ</button>
-            </div>
+            <h2 class="rainbow-text" style="font-size: 3rem; margin-bottom: 10px;">GAME OVER</h2>
+            <p>PUNTUACIÓN FINAL:</p>
+            <h3 id="final-score" style="font-size: 2.5rem; color: #00fbff; margin: 15px 0;">0</h3>
+            <button class="btn-neon" onclick="startGame(currentRunningGame)">REINTENTAR</button>
+            <button class="btn-link" onclick="volverAlMenu()">VOLVER AL MENÚ</button>
         </div>
     </div>
 
     <div id="main-app" class="hidden">
         <aside class="sidebar">
             <h2 class="rainbow-text-small">ARCADE GEMINI</h2>
+            <button onclick="startGame('guitar')">🎸 GUITAR MASTER</button>
             <button onclick="startGame('snake')">🐍 SNAKE NEON</button>
             <button onclick="startGame('geometry')">🤖 ROBOT PARKOUR</button>
             <button onclick="startGame('tetris')">🧱 TETRIS CLASSIC</button>
             <button onclick="showDinoCharacters()">🦖 DINO RUN</button>
-            <button class="btn-logout" onclick="logout()" style="margin-top: 30px; border-color: #ff4141; color: #ff4141;">🚪 SALIR</button>
+            <button class="btn-logout" onclick="logout()">🚪 CERRAR SESIÓN</button>
         </aside>
 
         <main class="content">
@@ -53,15 +48,26 @@
                 <div class="gif-container">
                     <img src="src/cat.gif" alt="Gato Arcade" class="welcome-gif">
                 </div>
-                <p class="blink">SELECCIONA UN JUEGO PARA EMPEZAR</p>
+                <p>SELECCIONA UN JUEGO PARA EMPEZAR</p>
             </div>
 
             <div id="game-layout" class="hidden">
                 <div id="stats-container">
-                    <span id="game-title" style="color: #00fbff;"></span>
+                    <span id="game-title"></span>
                     <span id="score-label">SCORE: <span id="score">0</span></span>
                 </div>
-                <canvas id="mainCanvas" width="400" height="400"></canvas>
+
+                <div class="canvas-container">
+                    <canvas id="mainCanvas" width="400" height="400" tabindex="0"></canvas>
+                    
+                    <div id="guitar-controls" class="hidden">
+                        <div class="lane-trigger" id="key-a">A</div>
+                        <div class="lane-trigger" id="key-s">S</div>
+                        <div class="lane-trigger" id="key-d">D</div>
+                        <div class="lane-trigger" id="key-f">F</div>
+                    </div>
+                </div>
+
                 <div class="ranking-box">
                     <h3>TOP SCORERS</h3>
                     <ul id="ranking-list"></ul>
@@ -75,18 +81,19 @@
                     <div class="char-card" onclick="startDino('🤖')"><span>🤖</span></div>
                     <div class="char-card" onclick="startDino('🐱')"><span>🐱</span></div>
                 </div>
-                <button class="btn-link" onclick="volverAlMenu()">VOLVER</button>
             </div>
         </main>
     </div>
 
-    <audio id="menutheme" src="src/menuloop.mp3" loop></audio>
-    <audio id="snaketheme" src="src/snaketheme.mp3" loop></audio>
-    <audio id="geometrytheme" src="src/geometrytheme.mp3" loop></audio>
-    <audio id="tetristheme" src="src/tetristheme.mp3" loop></audio>
-    <audio id="dinotheme" src="src/dinotheme.mp3" loop></audio>
+    <audio id="snaketheme" src="src/snaketheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
+    <audio id="geometrytheme" src="src/geometrytheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
+    <audio id="tetristheme" src="src/tetristheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
+    <audio id="dinotheme" src="src/dinotheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
+    <audio id="guitartheme" src="src/guitartheme.mp3" crossorigin="anonymous"></audio>
+<audio id="menutheme" src="src/menuLoop.mp3" loop></audio>
 
     <script src="script.js"></script>
+    <script src="guitar.js"></script>
     <script src="snake.js"></script>
     <script src="geometry.js"></script>
     <script src="tetrix.js"></script>
