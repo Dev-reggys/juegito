@@ -235,4 +235,8 @@ function initGeometryGD() {
 
     buildLevel();
     loop();
+
+    // Dentro de geometry.js cuando el robot choca:
+let progreso = calcularPorcentajeCompletado(); // Tu lógica de porcentaje
+mostrarGameOver(progreso);
 }

@@ -26,8 +26,11 @@
             <h2 class="rainbow-text" style="font-size: 3rem; margin-bottom: 10px;">GAME OVER</h2>
             <p>PUNTUACIÓN FINAL:</p>
             <h3 id="final-score" style="font-size: 2.5rem; color: #00fbff; margin: 15px 0;">0</h3>
-            <button class="btn-neon" onclick="startGame(currentRunningGame)">REINTENTAR</button>
-            <button class="btn-link" onclick="volverAlMenu()">VOLVER AL MENÚ</button>
+            
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button class="btn-neon" onclick="startGame(currentRunningGame)">🎮 REINTENTAR</button>
+                <button class="btn-neon" onclick="volverAlMenu()">🏠 VOLVER AL MENÚ</button>
+            </div>
         </div>
     </div>
 
@@ -35,10 +38,12 @@
         <aside class="sidebar">
             <h2 class="rainbow-text-small">ARCADE GEMINI</h2>
             <button onclick="startGame('guitar')">🎸 GUITAR MASTER</button>
-            <button onclick="startGame('snake')">🐍 SNAKE NEON</button>
+            <button onclick="startGame('slither')">🐍 SLITHER.IO PRO</button>
+            <button onclick="startGame('snake')">🟩 SNAKE NEON</button>
             <button onclick="startGame('geometry')">🤖 ROBOT PARKOUR</button>
             <button onclick="startGame('tetris')">🧱 TETRIS CLASSIC</button>
             <button onclick="showDinoCharacters()">🦖 DINO RUN</button>
+            
             <button class="btn-logout" onclick="logout()">🚪 CERRAR SESIÓN</button>
         </aside>
 
@@ -76,21 +81,28 @@
 
             <div id="char-menu" class="hidden">
                 <h2 class="rainbow-text-small">ELIGE TU PERSONAJE</h2>
-                <div class="char-grid">
-                    <div class="char-card" onclick="startDino('🦖')"><span>🦖</span></div>
-                    <div class="char-card" onclick="startDino('🤖')"><span>🤖</span></div>
-                    <div class="char-card" onclick="startDino('🐱')"><span>🐱</span></div>
+                <div class="char-selector">
+                    <button class="char-btn" onclick="startDino('🦖')">
+                        <span>🦖</span> REX CLASSIC
+                    </button>
+                    <button class="char-btn" onclick="startDino('🤖')">
+                        <span>🤖</span> CYBER DINO
+                    </button>
+                    <button class="char-btn" onclick="startDino('🐱')">
+                        <span>🐱</span> NEKO DASH
+                    </button>
                 </div>
             </div>
         </main>
     </div>
 
-    <audio id="snaketheme" src="src/snaketheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
-    <audio id="geometrytheme" src="src/geometrytheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
-    <audio id="tetristheme" src="src/tetristheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
-    <audio id="dinotheme" src="src/dinotheme.mp3" loop preload="auto" crossorigin="anonymous"></audio>
-    <audio id="guitartheme" src="src/guitartheme.mp3" crossorigin="anonymous"></audio>
-<audio id="menutheme" src="src/menuLoop.mp3" loop></audio>
+    <audio id="slithertheme" src="src/slithertheme.mp3"></audio>
+    <audio id="snaketheme" src="src/snaketheme.mp3"></audio>
+    <audio id="geometrytheme" src="src/geometrytheme.mp3"></audio>
+    <audio id="tetristheme" src="src/tetristheme.mp3"></audio>
+    <audio id="dinotheme" src="src/dinotheme.mp3"></audio>
+    <audio id="guitartheme" src="src/guitartheme.mp3"></audio>
+    <audio id="menutheme" src="src/menuLoop.mp3"></audio>
 
     <script src="script.js"></script>
     <script src="guitar.js"></script>
@@ -98,5 +110,17 @@
     <script src="geometry.js"></script>
     <script src="tetrix.js"></script>
     <script src="dino.js"></script>
+    <script src="slither.js"></script>
+
+    <div class="canvas-container">
+    <canvas id="mainCanvas" width="400" height="400" tabindex="0"></canvas>
+    
+    <div class="controls-container">
+    <div class="lane-trigger">A</div>
+    <div class="lane-trigger">S</div>
+    <div class="lane-trigger">D</div>
+    <div class="lane-trigger">F</div>
+</div>
+</div>
 </body>
 </html>

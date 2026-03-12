@@ -1,4 +1,7 @@
-/* --- ANIMACIONES GLOBALES --- */
+/* Importar fuente Pixel Art desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* --- 1. ANIMACIONES Y PROPIEDADES GLOBALES --- */
 @property --angle {
     syntax: '<angle>';
     initial-value: 0deg;
@@ -10,37 +13,27 @@
     100% { --angle: 360deg; }
 }
 
-@keyframes rainbowSweep {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-}
-
-/* Animación de pulso para el DASH (Integración) */
-@keyframes beatHit {
-    0% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.02); filter: brightness(1.4); }
-    100% { transform: scale(1); filter: brightness(1); }
-}
-
-/* --- RESET Y ESTRUCTURA BASE --- */
+/* --- 2. RESET Y ESTRUCTURA BASE --- */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Press Start 2P', cursive; 
+    image-rendering: pixelated; 
 }
 
 body {
-    background-color: #050505;
+    background-color: #000;
     color: #fff;
     overflow: hidden;
     height: 100vh;
     width: 100vw;
+    font-size: 12px; 
 }
 
 .hidden { display: none !important; }
 
-/* --- SISTEMA DE CAPAS Y LOGIN --- */
+/* --- 3. LOGIN Y MODALES (RGB ANIMADO) --- */
 .overlay {
     position: fixed;
     top: 0; left: 0;
@@ -52,111 +45,134 @@ body {
     z-index: 9999;
 }
 
-.login-box {
-    background: #050505;
-    padding: 40px;
+.login-box, .modal-box {
+    background: #111;
+    padding: 30px;
     text-align: center;
-    width: 380px;
-    border: 4px solid transparent;
+    width: 420px;
+    border: 6px solid transparent;
     border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
     animation: rotateGradient 4s linear infinite;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    outline: 4px solid #000;
+    box-shadow: 10px 10px 0px #333; 
 }
 
 .login-box h1 {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     margin-bottom: 25px;
-    background: linear-gradient(to right, red, orange, yellow, green, blue, purple, red);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rainbowSweep 3s linear infinite;
+    color: #ff0;
+    text-shadow: 4px 4px 0px #f00;
 }
 
 .login-box input {
     display: block;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     padding: 12px;
-    background: #111;
-    border: 1px solid #333;
-    color: #fff;
+    background: #000;
+    border: 4px solid #444;
+    color: #0f0;
+    font-size: 10px;
     outline: none;
 }
 
-.login-box button {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    color: #fff;
-    border: 2px solid #fff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.login-box button:hover { background: #fff; color: #000; }
-
-.btn-link {
-    background: none;
-    border: none;
-    color: #00fbff;
-    text-decoration: underline;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-/* --- INTERFAZ PRINCIPAL --- */
+/* --- 4. INTERFAZ PRINCIPAL (SIDEBAR) --- */
 #main-app {
     display: flex;
     height: 100vh;
-    width: 100vw;
 }
 
 .sidebar {
-    width: 260px;
-    background: #000;
+    width: 300px;
+    background: #111;
     display: flex;
     flex-direction: column;
     padding: 20px;
     gap: 15px;
-    border-right: 5px solid transparent;
+    border-right: 6px solid transparent;
     border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
     animation: rotateGradient 4s linear infinite;
 }
 
-.sidebar h2 {
-    font-size: 1.2rem;
-    text-align: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #222;
-}
-
-.sidebar button {
-    background: #0a0a0a;
-    color: #eee;
-    border: 1px solid #222;
-    padding: 15px;
-    font-size: 1rem;
-    text-align: left;
+/* --- 4. INTERFAZ PRINCIPAL (SIDEBAR) ACTUALIZADA --- */
+#main-app {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-    font-weight: bold;
+    height: 100vh;
 }
 
-.sidebar button:hover {
+.sidebar {
+    width: 300px;
     background: #111;
-    border-color: #00fbff;
-    transform: translateX(10px);
-    box-shadow: -5px 0 10px rgba(0, 251, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    border-right: 6px solid transparent;
+    border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
+    animation: rotateGradient 4s linear infinite;
 }
 
-.btn-logout { margin-top: auto; border-color: #ff4141 !important; color: #ff4141 !important; }
+/* Estilo base para todos los botones de la sidebar */
+.sidebar button {
+    background: #222;
+    padding: 15px;
+    font-size: 8px;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.1s;
+    font-weight: bold;
+    border: 4px solid #444; /* Borde por defecto */
+    color: #fff;            /* Texto blanco por defecto */
+}
 
+/* --- COLORES INDIVIDUALES POR POSICIÓN --- */
+
+/* 1. Guitar Master - ROJO */
+.sidebar button:nth-child(2) { border-color: #ff0044; color: #ff0044; }
+.sidebar button:nth-child(2):hover { background: #ff0044; color: #000; box-shadow: 0 0 15px #ff0044; }
+
+/* 2. Slither.io - AMARILLO */
+.sidebar button:nth-child(3) { border-color: #ffea00; color: #ffea00; }
+.sidebar button:nth-child(3):hover { background: #ffea00; color: #000; box-shadow: 0 0 15px #ffea00; }
+
+/* 3. Snake Neon - VERDE */
+.sidebar button:nth-child(4) { border-color: #00ff66; color: #00ff66; }
+.sidebar button:nth-child(4):hover { background: #00ff66; color: #000; box-shadow: 0 0 15px #00ff66; }
+
+/* 4. Robot Parkour - CIAN */
+.sidebar button:nth-child(5) { border-color: #00fbff; color: #00fbff; }
+.sidebar button:nth-child(5):hover { background: #00fbff; color: #000; box-shadow: 0 0 15px #00fbff; }
+
+/* 5. Tetris Classic - NARANJA */
+.sidebar button:nth-child(6) { border-color: #ff8800; color: #ff8800; }
+.sidebar button:nth-child(6):hover { background: #ff8800; color: #000; box-shadow: 0 0 15px #ff8800; }
+
+/* 6. Dino Run - VERDE ESMERALDA */
+.sidebar button:nth-child(7) { border-color: #40ffaa; color: #40ffaa; }
+.sidebar button:nth-child(7):hover { background: #40ffaa; color: #000; box-shadow: 0 0 15px #40ffaa; }
+
+/* Botón de Cerrar Sesión (Siempre Rojo) */
+.btn-logout { 
+    margin-top: auto; 
+    border-color: #ff0044 !important; 
+    color: #ff0044 !important; 
+}
+.btn-logout:hover { 
+    background: #ff0044 !important; 
+    color: #000 !important; 
+}
+
+/* COLORES ESPECÍFICOS PARA BOTONES SIDEBAR (Añade estas clases en tu HTML) */
+.btn-guitar { border-color: #f00 !important; color: #f00 !important; }
+.btn-slither { border-color: #ffea00 !important; color: #ffea00 !important; }
+.btn-snake { border-color: #0f0 !important; color: #0f0 !important; }
+.btn-robot { border-color: #0ff !important; color: #0ff !important; }
+.btn-tetris { border-color: #f90 !important; color: #f90 !important; }
+.btn-dino { border-color: #40ffaa !important; color: #40ffaa !important; }
+
+.btn-logout { margin-top: auto; border-color: #f00 !important; color: #f00 !important; }
+
+/* --- 5. CONTENIDO Y CANVAS --- */
 .content {
     flex: 1;
     background: #080808;
@@ -167,37 +183,23 @@ body {
     position: relative;
 }
 
-/* --- ZONA DE CANVAS Y RANKING --- */
-#game-layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Efecto de pulso cuando hay música (DASH) */
-.canvas-container.beat {
-    animation: beatHit 0.1s ease-out;
-}
-
-#stats-container {
-    width: 400px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #00fbff;
-    text-shadow: 0 0 8px rgba(0, 251, 255, 0.5);
-}
-
 .canvas-container {
     position: relative;
     width: 400px;
     height: 400px;
-    /* Integramos tu borde rotativo aquí también */
-    border: 4px solid transparent;
-    border-image: conic-gradient(from var(--angle), aqua, blue, magenta, red, yellow, lime, aqua) 1;
-    animation: rotateGradient 4s linear infinite;
+    border: 10px solid #444; 
+    background: #000;
+}
+
+/* Efecto líneas CRT */
+.canvas-container::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 5;
 }
 
 canvas {
@@ -205,101 +207,106 @@ canvas {
     display: block;
     width: 100%;
     height: 100%;
+    image-rendering: pixelated; 
 }
 
-/* --- CONTROLES DE GUITARRA --- */
+/* --- 6. CONTROLES GUITAR MASTER (HORIZONTAL Y COLORES) --- */
+/* --- 6. CONTROLES GUITAR MASTER (INTEGRADO Y CORREGIDO) --- */
 #guitar-controls {
-    position: absolute;
-    bottom: 35px; 
-    left: 0;
+    /* Quitamos !important para que .hidden pueda ocultarlo en otros juegos */
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
     width: 100%;
-    display: flex;
-    justify-content: space-around;
-    padding: 0 10px;
-    pointer-events: none;
-    z-index: 10;
+    margin-top: 15px;
+    gap: 10px;
 }
 
 .lane-trigger {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    border: 4px solid #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.6rem;
-    font-weight: 900;
-    background: rgba(0, 0, 0, 0.8);
-    transition: all 0.05s ease;
-}
-
-#key-a { border-color: #ff4141; color: #ff4141; box-shadow: 0 0 15px rgba(255, 65, 65, 0.3); }
-#key-s { border-color: #ffea00; color: #ffea00; box-shadow: 0 0 15px rgba(255, 234, 0, 0.3); }
-#key-d { border-color: #00ff41; color: #00ff41; box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); }
-#key-f { border-color: #00fbff; color: #00fbff; box-shadow: 0 0 15px rgba(0, 251, 255, 0.3); }
-
-.lane-trigger.active {
-    transform: scale(1.15) translateY(-5px);
-    background: #fff;
-    color: #000 !important;
-    box-shadow: 0 0 30px #fff;
-}
-
-/* --- RANKING Y MODALES --- */
-.ranking-box {
-    margin-top: 25px;
-    width: 400px;
-    padding: 20px;
+    flex: 1;
+    height: 60px;
     background: #000;
-    border: 3px solid transparent;
-    border-image: conic-gradient(from var(--angle), magenta, blue, aqua, lime, yellow, red, magenta) 1;
-    animation: rotateGradient 4s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem !important;
+    font-weight: 900;
+    box-shadow: 4px 4px 0px #333;
+    transition: 0.05s;
 }
 
-.modal-box {
-    background-color: rgba(0, 15, 20, 0.95);
-    border: 3px solid #00ff41;
-    padding: 40px;
-    border-radius: 15px;
+/* Colores Neón por Tecla */
+#key-a { border: 4px solid #ff0044 !important; color: #ff0044 !important; }
+#key-s { border: 4px solid #ffea00 !important; color: #ffea00 !important; }
+#key-d { border: 4px solid #00ff66 !important; color: #00ff66 !important; }
+#key-f { border: 4px solid #00fbff !important; color: #00fbff !important; }
+
+/* Efecto al presionar (Active) */
+#key-a.active { background: #ff0044 !important; color: #000 !important; transform: translateY(4px); box-shadow: none; }
+#key-s.active { background: #ffea00 !important; color: #000 !important; transform: translateY(4px); box-shadow: none; }
+#key-d.active { background: #00ff66 !important; color: #000 !important; transform: translateY(4px); box-shadow: none; }
+#key-f.active { background: #00fbff !important; color: #000 !important; transform: translateY(4px); box-shadow: none; }
+
+/* --- 7. RANKING (BAJADO PARA DAR ESPACIO) --- */
+.ranking-box {
+    margin-top: 80px; /* Bajamos el top score para que no choque con los botones */
+    width: 420px;
+    padding: 20px;
+    background: #111;
+    border: 4px solid #444;
+    border-top: 6px solid #ffea00;
+    box-shadow: 10px 10px 0px #000;
+}
+
+/* Asegúrate que .hidden esté así al final o inicio de tu CSS */
+.hidden {
+    display: none !important;
+}
+/* --- 7. RANKING Y OTROS --- */
+.ranking-box {
+    margin-top: 80px; /* BAJAMOS EL TOP SCORE PARA QUE NO CHOQUE */
+    width: 420px;
+    padding: 20px;
+    background: #111;
+    border: 4px solid #444;
+    border-top: 6px solid #ffea00;
+    box-shadow: 10px 10px 0px #000;
+}
+
+.ranking-box h3 {
     text-align: center;
-    box-shadow: 0 0 20px #00ff41, inset 0 0 15px #00ff41;
-    color: white;
-}
-
-.btn-neon {
-    background-color: transparent;
-    color: #00ff41;
-    border: 2px solid #00ff41;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: 0.3s ease;
-}
-
-.btn-neon:hover {
-    background-color: #00ff41;
-    color: #000;
-    box-shadow: 0 0 10px #00ff41;
+    color: #ffea00;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    font-size: 10px;
+    text-transform: uppercase;
 }
 
 .rainbow-text {
-    font-size: 4rem;
-    font-weight: 900;
-    background: linear-gradient(to right, red, orange, yellow, lime, cyan, blue, violet, red);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rainbowSweep 2.5s linear infinite;
+    font-size: 2rem;
+    color: #fff;
+    text-shadow: 4px 4px #f00, 8px 8px #00f, 12px 12px #000;
+    text-align: center;
 }
 
-.rainbow-text-small {
-    font-size: 1.5rem;
+.char-btn {
+    width: 320px;
+    background: #222;
+    border: 4px solid #f0f;
+    color: #fff;
+    padding: 15px;
+    margin: 5px 0;
+    font-size: 10px;
     font-weight: bold;
-    background: linear-gradient(to right, red, orange, yellow, lime, cyan, blue, violet, red);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rainbowSweep 3s linear infinite;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #660066;
 }
+
+.char-btn:hover { 
+    background: #f0f; 
+    color: #000; 
+    box-shadow: none;
+    transform: translate(3px, 3px);
+}
+
+.char-btn span { font-size: 2rem; }
