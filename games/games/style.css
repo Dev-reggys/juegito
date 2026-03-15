@@ -1,0 +1,356 @@
+/* Importar fuente Pixel Art */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* --- 1. ANIMACIONES Y VARIABLES --- */
+@property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes rotateGradient {
+    0% { --angle: 0deg; }
+    100% { --angle: 360deg; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-15px) scale(1.05); }
+}
+
+@keyframes pulse-neon {
+    0% { box-shadow: 0 0 10px currentColor, inset 0 0 5px currentColor; }
+    50% { box-shadow: 0 0 25px currentColor, inset 0 0 15px currentColor; }
+    100% { box-shadow: 0 0 10px currentColor, inset 0 0 5px currentColor; }
+}
+
+/* --- 2. RESET TOTAL --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Press Start 2P', cursive;
+    image-rendering: pixelated;
+}
+
+body {
+    background-color: #050505;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    font-size: 10px;
+    background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%), 
+                      linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+    background-size: 100% 3px, 3px 100%;
+    display: flex; 
+}
+
+.hidden { display: none !important; }
+
+/* --- 3. LOGIN Y MODALES --- */
+.overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: radial-gradient(circle, #222 0%, #000 100%);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+}
+
+.login-box, .modal-box {
+    background: #111;
+    padding: 60px 50px;
+    text-align: center;
+    width: 650px;
+    border: 8px solid transparent;
+    border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;
+    animation: rotateGradient 4s linear infinite;
+    box-shadow: 0 0 50px rgba(0,0,0,1);
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+}
+
+.login-box h1 {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 20px;
+    font-size: 14px;
+    background: #222;
+    color: #00fbff;
+    border: 3px solid #444;
+    border-radius: 8px;
+    outline: none;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.login-box input:focus {
+    border-color: #00fbff;
+    box-shadow: 0 0 15px rgba(0, 251, 255, 0.5);
+}
+
+#auth-main-btn {
+    width: 100%;
+    padding: 20px;
+    font-size: 16px;
+    background: #222;
+    color: #fff;
+    border: 3px solid #00fbff;
+    border-bottom: 8px solid #0088cc;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.1s;
+    text-transform: uppercase;
+}
+
+#auth-main-btn:active {
+    transform: translateY(4px);
+    border-bottom-width: 4px;
+}
+
+#auth-main-btn:hover {
+    background: #003344;
+    box-shadow: 0 0 20px #00fbff;
+}
+
+.auth-switch {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.auth-switch button {
+    background: #111;
+    border: 2px solid #ffea00;
+    color: #ffea00;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Press Start 2P', cursive;
+    border-radius: 5px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.auth-switch button:hover {
+    background: #ffea00;
+    color: #000;
+    box-shadow: 0 0 15px #ffea00;
+}
+
+/* --- 4. SIDEBAR Y BOTONES ARCADE --- */
+.sidebar {
+    width: 320px;
+    min-width: 320px;
+    height: 100vh;
+    background: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    padding: 25px 15px;
+    gap: 20px;
+    border-right: 5px solid #1a1a1a;
+}
+
+.sidebar h2 {
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sidebar button {
+    position: relative;
+    padding: 20px 10px;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: bold;
+    color: #fff;
+    background: #222;
+    border: none;
+    border-radius: 12px;
+    border-top: 2px solid rgba(255,255,255,0.3);
+    border-left: 2px solid rgba(255,255,255,0.1);
+    border-bottom: 8px solid #000;
+    transition: all 0.1s;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar button:active {
+    transform: translateY(6px);
+    border-bottom: 2px solid #000;
+    filter: brightness(0.8);
+}
+
+.btn-guitar { color: #ff0044 !important; animation: pulse-neon 2s infinite; }
+.btn-guitar:hover { background: #e15f82; }
+.btn-slither { color: #ffea00 !important; animation: pulse-neon 2.2s infinite; }
+.btn-slither:hover { background: #e3d640; }
+.btn-snake { color: #00ff66 !important; animation: pulse-neon 1.8s infinite; }
+.btn-snake:hover { background: #58eb92; }
+.btn-robot { color: #00fbff !important; animation: pulse-neon 2.5s infinite; }
+.btn-robot:hover { background: #003e40; }
+.btn-tetris { color: #ff8800 !important; animation: pulse-neon 2.1s infinite; }
+.btn-tetris:hover { background: #442500; }
+.btn-dino { color: #40ffaa !important; animation: pulse-neon 1.9s infinite; }
+.btn-dino:hover { background: #11442d; }
+.btn-logout { margin-top: auto; color: #ff3333 !important; border-bottom: 8px solid #600; }
+
+/* --- 5. ÁREA DE JUEGO Y LAYOUT PRINCIPAL (CENTRADOS) --- */
+.content {
+    flex: 1;
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* Centra horizontalmente el juego y el gato */
+    justify-content: center;   /* Centra verticalmente */
+    position: relative;
+    padding: 20px; 
+}
+
+#game-layout {
+    display: flex;
+    flex-direction: column;    /* Ranking debajo del juego */
+    align-items: center;       /* Centra el canvas */
+    gap: 30px;
+    width: 100%;
+}
+
+/* MENSAJE DE BIENVENIDA CENTRADO */
+#welcome-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+}
+
+.rainbow-text {
+    background: linear-gradient(to right, red, orange, yellow, lime, cyan, blue, violet);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rotateGradient 3s linear infinite;
+    font-size: 3rem;
+    margin-bottom: 30px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.welcome-gif {
+    max-width: 350px;
+    margin: 0 auto 20px auto; /* Centrado absoluto del Nyan Cat */
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(0, 251, 255, 0.6));
+    cursor: pointer;
+    display: block; 
+}
+
+#welcome-msg p {
+    font-size: 14px;
+    color: #fff;
+    margin-top: 10px;
+    letter-spacing: 2px;
+}
+
+/* --- 6. CONTENEDOR DEL CANVAS --- */
+.canvas-container {
+    position: relative;
+    border: 10px solid #222;
+    border-radius: 10px;
+    box-shadow: 0 0 40px #000;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;    
+    background-color: #000;
+    padding-bottom: 15px;
+    margin: 0 auto; /* Asegura el centro */
+}
+
+.canvas-container canvas {
+    display: block; 
+}
+
+.canvas-container::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                radial-gradient(rgba(255,255,255,0.05), transparent);
+    background-size: 100% 4px, 100% 100%;
+    pointer-events: none;
+}
+
+/* --- 7. RANKING Y CONTROLES --- */
+.ranking-box {
+    margin-top: 30px;
+    padding: 20px;
+    background: #0a0a0a;
+    border: 4px solid #333;
+    width: 350px;
+    box-shadow: 0 10px 0 #000;
+    text-align: center;
+}
+
+.mute-control {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 60px; height: 60px;
+    background: #222;
+    border: 4px solid #00fbff;
+    border-bottom: 6px solid #000;
+    border-radius: 50%;
+    color: #00fbff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    z-index: 100;
+}
+
+#char-menu { text-align: center; }
+#char-menu button {
+    background: #222;
+    color: #fff;
+    border: 3px solid #00fbff;
+    border-bottom: 6px solid #0088cc;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.1s;
+}
+
+/* --- 8. CONTROLES DE JUEGO --- */
+#guitar-controls {
+    display: flex;
+    width: 100%;
+    max-width: 400px;
+    justify-content: space-between;
+    margin-top: 10px; 
+    padding: 0 20px; 
+    z-index: 10; 
+}
+
+.lane-trigger {
+    width: 75px; height: 50px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 24px; background: #000; border: 4px solid #fff;
+    border-radius: 5px; font-weight: bold;
+}
+
+#key-a { border-color: #ff0044; color: #ff0044; box-shadow: 0 0 15px #ff0044, inset 0 0 10px #ff0044; }
+#key-s { border-color: #ffea00; color: #ffea00; box-shadow: 0 0 15px #ffea00, inset 0 0 10px #ffea00; }
+#key-d { border-color: #00ff66; color: #00ff66; box-shadow: 0 0 15px #00ff66, inset 0 0 10px #00ff66; }
+#key-f { border-color: #00fbff; color: #00fbff; box-shadow: 0 0 15px #00fbff, inset 0 0 10px #00fbff; }
