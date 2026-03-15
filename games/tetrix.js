@@ -1,5 +1,6 @@
+/* --- MOTOR DE TETRIS (CON SISTEMA DE VIDAS Y LIMPIEZA DE ARENA) --- */
 function initTetris() {
-    if (animationId) cancelAnimationFrame(animationId);
+    if (window.animationId) cancelAnimationFrame(window.animationId);
     
     const box = 20;
     const cols = canvas.width / box;
@@ -7,13 +8,19 @@ function initTetris() {
     let score = 0, dropCounter = 0, dropInterval = 1000, lastTime = 0;
     const board = Array.from({ length: rows }, () => Array(cols).fill(0));
     let player = { pos: { x: 0, y: 0 }, matrix: null };
+    let boardInvulnerable = false; // Para el efecto visual al perder vida
 
     const pieces = [
-        [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]], [[2,2],[2,2]], [[0,3,3],[3,3,0],[0,0,0]]
+        [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]], // I
+        [[2,2],[2,2]], // O
+        [[0,3,3],[3,3,0],[0,0,0]], // S
+        [[4,4,0],[0,4,4],[0,0,0]], // Z
+        [[5,0,0],[5,5,5],[0,0,0]], // L
+        [[0,0,6],[6,6,6],[0,0,0]], // J
+        [[0,7,0],[7,7,7],[0,0,0]]  // T
     ];
-    const colors = [null, "#00ffff", "#ffff00", "#00ff00", "#ff0000", "#ff00ff", "#ff8000"];
+    const colors = [null, "#00ffff", "#ffff00", "#00ff00", "#ff4141", "#ff00ff", "#ff8000", "#00fbff"];
 
-    // PUENTE DE CONTROL
     window.moverTetris = (keyCode) => {
         if (!window.gameActive) return;
         if (keyCode === 37) playerMove(-1);
@@ -29,8 +36,17 @@ function initTetris() {
 
     function playerRotate() {
         const pos = player.pos.x;
+        let offset = 1;
         rotate(player.matrix);
-        if (collide(board, player)) { rotate(player.matrix, -1); player.pos.x = pos; }
+        while (collide(board, player)) {
+            player.pos.x += offset;
+            offset = -(offset + (offset > 0 ? 1 : -1));
+            if (offset > player.matrix[0].length) {
+                rotate(player.matrix, -1);
+                player.pos.x = pos;
+                return;
+            }
+        }
     }
 
     function rotate(matrix, dir = 1) {
@@ -72,7 +88,7 @@ function initTetris() {
             for (let x = 0; x < board[y].length; ++x) { if (board[y][x] === 0) continue outer; }
             const row = board.splice(y, 1)[0].fill(0);
             board.unshift(row);
-            score += 10; scoreElement.innerText = score;
+            score += 10; window.scoreElement.innerText = score;
         }
     }
 
@@ -80,28 +96,59 @@ function initTetris() {
         player.matrix = pieces[Math.floor(Math.random() * pieces.length)];
         player.pos.y = 0;
         player.pos.x = Math.floor(cols / 2) - 1;
-        if (collide(board, player)) { window.gameActive = false; mostrarGameOver(score); }
+
+        // CHOQUE EN EL TECHO (SISTEMA DE VIDAS)
+        if (collide(board, player)) {
+            window.Vidas(); // Restar vida global
+
+            if (window.lives > 0) {
+                // LIMPIEZA DE EMERGENCIA: Borrar las 6 filas superiores para dar espacio
+                for(let y = 0; y < 8; y++) {
+                    board[y].fill(0);
+                }
+                boardInvulnerable = true;
+                setTimeout(() => { boardInvulnerable = false; }, 1500);
+            } else {
+                // Game Over ya manejado por window.Vidas()
+                return;
+            }
+        }
     }
 
     function update(time = 0) {
-        if (!window.gameActive || currentRunningGame !== 'tetris') return;
+        if (!window.gameActive || window.currentRunningGame !== 'tetris') return;
         const deltaTime = time - lastTime;
         lastTime = time;
         dropCounter += deltaTime;
         if (dropCounter > dropInterval) playerDrop();
-        ctx.fillStyle = "#111"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        drawMatrix(board, {x:0, y:0});
-        drawMatrix(player.matrix, player.pos);
-        animationId = requestAnimationFrame(update);
+
+        ctx.fillStyle = "#111"; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar Tablero (con efecto parpadeo si perdió vida)
+        if (!boardInvulnerable || Math.floor(Date.now() / 150) % 2) {
+            drawMatrix(board, {x:0, y:0});
+            drawMatrix(player.matrix, player.pos);
+        }
+
+        window.animationId = requestAnimationFrame(update);
     }
 
     function drawMatrix(matrix, offset) {
         matrix.forEach((row, y) => {
             row.forEach((v, x) => {
-                if (v !== 0) { ctx.fillStyle = colors[v]; ctx.fillRect((x+offset.x)*box, (y+offset.y)*box, box-1, box-1); }
+                if (v !== 0) { 
+                    ctx.fillStyle = colors[v]; 
+                    ctx.fillRect((x+offset.x)*box, (y+offset.y)*box, box-1, box-1); 
+                    // Toque neón
+                    ctx.strokeStyle = "white";
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect((x+offset.x)*box, (y+offset.y)*box, box-1, box-1);
+                }
             });
         });
     }
 
-    resetPlayer(); update();
+    resetPlayer(); 
+    update();
 }

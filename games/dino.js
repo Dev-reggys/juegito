@@ -1,4 +1,4 @@
-/* --- MOTOR DINO RUN PRO (CON SEPARACIÓN MÍNIMA) --- */
+/* --- MOTOR DINO RUN PRO (INTEGRADO CON SISTEMA DE VIDAS) --- */
 function initDino(charEmoji) {
     const canvas = window.canvas;
     const ctx = window.ctx;
@@ -12,16 +12,16 @@ function initDino(charEmoji) {
         dy: 0,
         jumpForce: 13,
         gravity: 0.7,
-        grounded: false
+        grounded: false,
+        invulnerable: false // Nuevo: para no perder todas las vidas en un segundo
     };
 
     let obstacles = [];
     let gameSpeed = 6;
-    let lastObstaclePos = 0; // Para rastrear dónde está el último obstáculo
-    let minDistance = 200;   // Distancia mínima de separación en píxeles
+    let minDistance = 200;   
     window.scoreElement.innerText = "0";
 
-    // Controles
+    // Controles (Sin cambios, manteniendo tu lógica)
     window.onkeydown = (e) => {
         if ((e.code === "Space" || e.code === "ArrowUp") && dino.grounded) {
             dino.dy = -dino.jumpForce;
@@ -42,12 +42,8 @@ function initDino(charEmoji) {
             { tipo: 'pajaro_bajo', emoji: '🦇', y: 300, w: 30, h: 20 },
             { tipo: 'piedra', emoji: '🪨', y: 345, w: 20, h: 20 }
         ];
-        
         const random = tipos[Math.floor(Math.random() * tipos.length)];
-        return {
-            x: canvas.width + 50,
-            ...random
-        };
+        return { x: canvas.width + 50, ...random };
     }
 
     function loop() {
@@ -66,17 +62,14 @@ function initDino(charEmoji) {
         }
 
         // --- GENERADOR CON MARGEN DE SEGURIDAD ---
-        // Solo intentamos crear un obstáculo si el último ya avanzó lo suficiente
         let distanceToLast = (obstacles.length > 0) 
             ? canvas.width - obstacles[obstacles.length - 1].x 
             : minDistance + 1;
 
         if (distanceToLast > minDistance) {
-            // Un 2% de probabilidad de generar uno cada frame una vez superada la distancia
             if (Math.random() < 0.02) { 
                 obstacles.push(crearObstaculo());
-                gameSpeed += 0.03; // Aceleración más suave para que sea jugable
-                // Aumentamos ligeramente la distancia mínima según la velocidad
+                gameSpeed += 0.03; 
                 minDistance = 180 + (gameSpeed * 5); 
             }
         }
@@ -89,17 +82,26 @@ function initDino(charEmoji) {
             ctx.font = obs.tipo.includes('pajaro') ? "25px Arial" : "30px Arial";
             ctx.fillText(obs.emoji, obs.x, obs.y);
 
-            // Hitbox
+            // Hitbox mejorada
             let padding = 8;
             if (
+                !dino.invulnerable && // Solo choca si no es invulnerable
                 dino.x + padding < obs.x + obs.w &&
                 dino.x + dino.w - padding > obs.x &&
                 dino.y + padding < obs.y &&
                 dino.y + dino.h - padding > obs.y - obs.h
             ) {
-                actualizarRanking(currentUser || "Anónimo", window.scoreElement.innerText);
-                mostrarGameOver(window.scoreElement.innerText);
-                return;
+                // LLAMADA AL SISTEMA DE VIDAS GLOBAL
+                window.Vidas(); 
+                
+                // Si aún le quedan vidas, darle un respiro
+                if (window.lives > 0) {
+                    dino.invulnerable = true;
+                    obstacles = []; // Limpiamos pantalla para que no muera al reaparecer
+                    setTimeout(() => { dino.invulnerable = false; }, 1000); 
+                } else {
+                    return; // window.Vidas ya llamó a mostrarGameOver
+                }
             }
 
             if (obs.x < -50) {
@@ -116,8 +118,11 @@ function initDino(charEmoji) {
         ctx.lineTo(canvas.width, 350);
         ctx.stroke();
 
-        ctx.font = "40px Arial";
-        ctx.fillText(dino.emoji, dino.x, dino.y + 10);
+        // Efecto parpadeo si es invulnerable
+        if (!dino.invulnerable || Math.floor(Date.now() / 100) % 2) {
+            ctx.font = "40px Arial";
+            ctx.fillText(dino.emoji, dino.x, dino.y + 10);
+        }
 
         window.animationId = requestAnimationFrame(loop);
     }

@@ -36,13 +36,13 @@
 
     <div id="main-app" class="hidden">
         <aside class="sidebar">
-            <h2 class="rainbow-text-small">ARCADE GEMINI</h2>
-            <button onclick="startGame('guitar')">🎸 GUITAR MASTER</button>
-            <button onclick="startGame('slither')">🐍 SLITHER.IO PRO</button>
-            <button onclick="startGame('snake')">🟩 SNAKE NEON</button>
-            <button onclick="startGame('geometry')">🤖 ROBOT PARKOUR</button>
-            <button onclick="startGame('tetris')">🧱 TETRIS CLASSIC</button>
-            <button onclick="showDinoCharacters()">🦖 DINO RUN</button>
+            <h2 class="rainbow-text-small">ARCADE 1987</h2>
+            <button class="btn-guitar" onclick="startGame('guitar')">🎸 GUITAR MASTER</button>
+            <button class="btn-slither" onclick="startGame('slither')">🐍 SLITHER.IO PRO</button>
+            <button class="btn-snake" onclick="startGame('snake')">🟩 SNAKE</button>
+            <button class="btn-robot" onclick="startGame('geometry')">🤖 ROBOT PARKOUR</button>
+            <button class="btn-tetris" onclick="startGame('tetris')">🧱 TETRIX</button>
+            <button class="btn-dino" onclick="showDinoCharacters()">🦖 DINO RUN</button>
             
             <button class="btn-logout" onclick="logout()">🚪 CERRAR SESIÓN</button>
         </aside>
@@ -59,7 +59,10 @@
             <div id="game-layout" class="hidden">
                 <div id="stats-container">
                     <span id="game-title"></span>
-                    <span id="score-label">SCORE: <span id="score">0</span></span>
+                    <div style="display: flex; gap: 20px;">
+                        <span id="score-label">SCORE: <span id="score">0</span></span>
+                        <span id="lives-label">LIVES: <span id="lives">❤️❤️❤️</span></span>
+                    </div>
                 </div>
 
                 <div class="canvas-container">
@@ -82,17 +85,15 @@
             <div id="char-menu" class="hidden">
                 <h2 class="rainbow-text-small">ELIGE TU PERSONAJE</h2>
                 <div class="char-selector">
-                    <button class="char-btn" onclick="startDino('🦖')">
-                        <span>🦖</span> REX CLASSIC
-                    </button>
-                    <button class="char-btn" onclick="startDino('🤖')">
-                        <span>🤖</span> CYBER DINO
-                    </button>
-                    <button class="char-btn" onclick="startDino('🐱')">
-                        <span>🐱</span> NEKO DASH
-                    </button>
+                    <button class="char-btn" onclick="startDino('🦖')"><span>🦖</span> REX Google</button>
+                    <button class="char-btn" onclick="startDino('🤖')"><span>🤖</span> CYBER DINO</button>
+                    <button class="char-btn" onclick="startDino('🐱')"><span>🐱</span> NEKO DASH</button>
                 </div>
             </div>
+
+            <button id="btn-mute" class="mute-control">
+    <span id="mute-icon">🔊</span>
+</button>
         </main>
     </div>
 
@@ -104,6 +105,8 @@
     <audio id="guitartheme" src="src/guitartheme.mp3"></audio>
     <audio id="menutheme" src="src/menuLoop.mp3"></audio>
 
+<video src="src/susto.mp4" class="nyan-cat" autoplay loop muted></video>
+
     <script src="script.js"></script>
     <script src="guitar.js"></script>
     <script src="snake.js"></script>
@@ -111,16 +114,5 @@
     <script src="tetrix.js"></script>
     <script src="dino.js"></script>
     <script src="slither.js"></script>
-
-    <div class="canvas-container">
-    <canvas id="mainCanvas" width="400" height="400" tabindex="0"></canvas>
-    
-    <div class="controls-container">
-    <div class="lane-trigger">A</div>
-    <div class="lane-trigger">S</div>
-    <div class="lane-trigger">D</div>
-    <div class="lane-trigger">F</div>
-</div>
-</div>
 </body>
 </html>

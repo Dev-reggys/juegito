@@ -1,19 +1,20 @@
-/* --- MOTOR DE SNAKE (CONEXIÓN FORZADA) --- */
+/* --- MOTOR DE SNAKE (CONSERVANDO PUNTOS Y LARGO) --- */
 function initSnake() {
-    if (window.currentGameInterval) clearInterval(window.currentGameInterval);
+    if (window.currentGameInterval) clearTimeout(window.currentGameInterval);
 
     const box = 20;
+    // Iniciamos la serpiente. Si ya había puntos, los respetamos.
     let snake = [{ x: 10 * box, y: 10 * box }];
     let dir = "RIGHT";
-    let score = 0;
+    let score = parseInt(window.scoreElement.innerText) || 0; 
+    let invulnerable = false; 
+    
     let food = { 
         x: Math.floor(Math.random() * 19 + 1) * box, 
         y: Math.floor(Math.random() * 19 + 1) * box 
     };
 
-    // CONEXIÓN MAESTRA: Forzamos la función al objeto window
     window.moverSnake = function(keyCode) {
-        console.log("Snake recibió tecla:", keyCode); // Esto te dirá en consola si funciona
         if (!window.gameActive) return;
         if (keyCode == 37 && dir != "RIGHT") dir = "LEFT";
         else if (keyCode == 38 && dir != "DOWN") dir = "UP";
@@ -27,12 +28,16 @@ function initSnake() {
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Dibujar comida y serpiente
+        // Dibujar comida
         ctx.fillStyle = "#ff4141";
         ctx.fillRect(food.x, food.y, box, box);
+
+        // --- DIBUJAR SERPIENTE CON PARPADEO ---
         for (let i = 0; i < snake.length; i++) {
-            ctx.fillStyle = (i == 0) ? "#00ff41" : "#008f11";
-            ctx.fillRect(snake[i].x, snake[i].y, box - 1, box - 1);
+            if (!invulnerable || Math.floor(Date.now() / 100) % 2) {
+                ctx.fillStyle = (i == 0) ? "#00fbff" : "#008f11";
+                ctx.fillRect(snake[i].x, snake[i].y, box - 1, box - 1);
+            }
         }
 
         let headX = snake[0].x;
@@ -42,19 +47,54 @@ function initSnake() {
         if (dir == "RIGHT") headX += box;
         if (dir == "DOWN") headY += box;
 
-        if (headX < 0 || headX >= canvas.width || headY < 0 || headY >= canvas.height) {
-            window.gameActive = false;
-            mostrarGameOver(score);
-            return;
+        // --- DETECCIÓN DE CHOQUE ---
+        let chocoPared = headX < 0 || headX >= canvas.width || headY < 0 || headY >= canvas.height;
+        let chocoCuerpo = false;
+        for(let i=1; i<snake.length; i++) {
+            if(headX == snake[i].x && headY == snake[i].y) chocoCuerpo = true;
         }
 
+        if ((chocoPared || chocoCuerpo) && !invulnerable) {
+            window.Vidas(); // Restar vida global
+
+            if (window.lives > 0) {
+                invulnerable = true;
+                
+                // --- CÁLCULO DE TELETRANSPORTE (Mantiene el largo) ---
+                let diffX = (10 * box) - snake[0].x;
+                let diffY = (10 * box) - snake[0].y;
+
+                // Movemos cada segmento para que no se pierdan los puntos/largo
+                for(let i=0; i < snake.length; i++) {
+                    snake[i].x += diffX;
+                    snake[i].y += diffY;
+                }
+                
+                dir = "RIGHT"; // Dirección segura por defecto
+                
+                setTimeout(() => { 
+                    if(window.currentRunningGame === 'snake') invulnerable = false; 
+                }, 2000); // 2 segundos de escudo
+                
+                window.currentGameInterval = setTimeout(draw, 100);
+                return;
+            } else {
+                return; 
+            }
+        }
+
+        // --- LÓGICA DE COMIDA ---
         if (headX == food.x && headY == food.y) {
             score++;
             window.scoreElement.innerText = score;
-            food = { x: Math.floor(Math.random() * 19 + 1) * box, y: Math.floor(Math.random() * 19 + 1) * box };
+            food = { 
+                x: Math.floor(Math.random() * 19 + 1) * box, 
+                y: Math.floor(Math.random() * 19 + 1) * box 
+            };
         } else {
             snake.pop();
         }
+        
         snake.unshift({ x: headX, y: headY });
         window.currentGameInterval = setTimeout(draw, 100);
     }

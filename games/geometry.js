@@ -1,4 +1,4 @@
-/* --- MOTOR DE GEOMETRY DASH (CON SALTO CONTINUO, NIVEL LARGO Y BARRA DE PROGRESO) --- */
+/* --- MOTOR DE GEOMETRY DASH (CON GENERACIÓN LARGA + SISTEMA DE VIDAS) --- */
 function initGeometryGD() {
     // 1. LIMPIEZA INICIAL
     if (window.animationId) cancelAnimationFrame(window.animationId);
@@ -8,15 +8,14 @@ function initGeometryGD() {
     const jumpForce = -12;
     const groundY = 380;
     
-    // --- NUEVO: SISTEMA DE SALTO CONTINUO (BUFFER JUMP) ---
     let isHoldingJump = false;
+    let gdInvulnerable = false; // Protección temporal al perder vida
 
-    // Puente para el script.js (cuando presionas la tecla hacia abajo)
+    // Puente para el script.js
     window.saltarGeometry = () => {
         if (window.gameActive) isHoldingJump = true;
     };
 
-    // Detectar soltar la tecla (Para detener el salto continuo)
     window.addEventListener('keyup', (e) => {
         const teclasSalto = ["ArrowUp", " ", "w", "W"];
         if (window.currentRunningGame === 'geometry' && teclasSalto.includes(e.key)) {
@@ -24,44 +23,30 @@ function initGeometryGD() {
         }
     });
 
-    // Detectar el Ratón
     if (window.canvas) {
         window.canvas.onmousedown = () => {
             if (window.currentRunningGame === 'geometry') isHoldingJump = true;
         };
-        // Cuando levantas el clic o el ratón sale del juego
         window.canvas.onmouseup = () => { isHoldingJump = false; };
         window.canvas.onmouseleave = () => { isHoldingJump = false; };
     }
-    // --------------------------------------------------------
 
     let obstacles = [];
     
     function buildLevel() {
-        // 1. EL INICIO A MANO (Los primeros 12 segundos)
+        // 1. EL INICIO A MANO
         let layout = [
-            // Calentamiento: Picos simples y dobles
             {t:'s', x: 500}, {t:'s', x: 900}, {t:'s', x: 930}, 
             {t:'s', x: 1300}, {t:'s', x: 1330},
-            
-            // Primera Plataforma: Bloques para subirse
             {t:'b', x: 1700, y: 350}, {t:'b', x: 1730, y: 350}, {t:'b', x: 1760, y: 350},
-            {t:'s', x: 1790, y: 350}, // Pico justo al bajar
-            
-            // El infame salto triple
+            {t:'s', x: 1790, y: 350}, 
             {t:'s', x: 2300}, {t:'s', x: 2330}, {t:'s', x: 2360},
-            
-            // Escalera de bloques (Chaoz Fantasy style)
             {t:'b', x: 2800, y: 350}, 
             {t:'b', x: 2860, y: 310}, 
             {t:'b', x: 2920, y: 270},
-            {t:'s', x: 3000}, // Pico en el suelo para evitar que caigas directo
-            
-            // Doble salto triple rápido
+            {t:'s', x: 3000},
             {t:'s', x: 3400}, {t:'s', x: 3430}, {t:'s', x: 3460},
             {t:'s', x: 3700}, {t:'s', x: 3730}, {t:'s', x: 3760},
-            
-            // Túnel estrecho
             {t:'b', x: 4200, y: 350}, {t:'s', x: 4230}, {t:'b', x: 4260, y: 350}
         ];
 
@@ -82,7 +67,6 @@ function initGeometryGD() {
             currentX += 800 + Math.floor(Math.random() * 300); 
         }
 
-        // 3. CONVERSIÓN A FÍSICAS
         layout.forEach(item => {
             let h = item.t === 'b' ? 30 : 25; 
             let y = item.y !== undefined ? item.y : groundY - h;
@@ -93,13 +77,11 @@ function initGeometryGD() {
     function loop() {
         if (!window.gameActive || window.currentRunningGame !== 'geometry') return;
 
-        // --- LÓGICA DE SALTO AUTOMÁTICO AL ATERRIZAR ---
         if (isHoldingJump && player.ground) {
             player.vY = jumpForce;
             player.ground = false;
         }
 
-        // Físicas del jugador
         player.vY += gravity;
         player.x += player.vX; 
         player.y += player.vY;
@@ -108,31 +90,40 @@ function initGeometryGD() {
         let playerRight = player.x + player.w;
         player.ground = false; 
 
-        // Colisiones
+        // --- COLISIONES CON INTEGRACIÓN DE VIDAS ---
         let onBlock = false;
         for (let i = 0; i < obstacles.length; i++) {
             let obs = obstacles[i];
             
             if (playerRight > obs.x + 5 && player.x < obs.x + obs.w - 5) { 
-                if (obs.type === 's') { 
-                    if (playerBottom > obs.y + 10 && player.y < obs.y + obs.h) {
+                // Colisión con Picos o Paredes de Bloques
+                let hitObstacle = false;
+                if (obs.type === 's' && playerBottom > obs.y + 10 && player.y < obs.y + obs.h) hitObstacle = true;
+                if (obs.type === 'b' && playerBottom > obs.y + 10 && player.y < obs.y + obs.h) hitObstacle = true;
+
+                if (hitObstacle && !gdInvulnerable) {
+                    window.Vidas(); // Restar vida global
+                    
+                    if (window.lives > 0) {
+                        gdInvulnerable = true;
+                        // Pequeño impulso hacia arriba para no morir de nuevo al instante
+                        player.vY = -8; 
+                        player.y -= 10;
+                        setTimeout(() => { gdInvulnerable = false; }, 1500);
+                    } else {
                         window.gameActive = false;
-                        mostrarGameOver(Math.floor(player.x / 10));
+                        let progreso = Math.floor((player.x / 45000) * 100);
+                        mostrarGameOver(progreso + "%");
                         return;
                     }
-                } 
-                else if (obs.type === 'b') { 
-                    if (playerBottom > obs.y + 10 && player.y < obs.y + obs.h) {
-                        window.gameActive = false;
-                        mostrarGameOver(Math.floor(player.x / 10));
-                        return;
-                    }
-                    if (playerBottom >= obs.y && playerBottom <= obs.y + 20 && player.vY >= 0) {
-                        player.y = obs.y - player.h;
-                        player.vY = 0;
-                        player.ground = true;
-                        onBlock = true;
-                    }
+                }
+
+                // Lógica de plataforma para bloques
+                if (obs.type === 'b' && playerBottom >= obs.y && playerBottom <= obs.y + 20 && player.vY >= 0) {
+                    player.y = obs.y - player.h;
+                    player.vY = 0;
+                    player.ground = true;
+                    onBlock = true;
                 }
             }
         }
@@ -143,14 +134,14 @@ function initGeometryGD() {
             player.ground = true;
         }
 
-        // Renderizado
+        // --- RENDERIZADO ---
         ctx.fillStyle = "#001b21";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         ctx.save();
         ctx.translate(-player.x + 150, 0);
 
-        // Dibujar Suelo
+        // Suelo
         ctx.strokeStyle = "#00ff41";
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -158,7 +149,7 @@ function initGeometryGD() {
         ctx.lineTo(player.x + 800, groundY);
         ctx.stroke();
 
-        // Dibujar Obstáculos
+        // Obstáculos
         obstacles.forEach(obs => {
             if (obs.type === 'b') {
                 ctx.fillStyle = "#00ff41";
@@ -176,22 +167,23 @@ function initGeometryGD() {
             }
         });
 
-        // Dibujar Jugador
-        ctx.fillStyle = "#00ff41";
-        if (!player.ground) {
-            ctx.save();
-            ctx.translate(player.x + player.w/2, player.y + player.h/2);
-            ctx.rotate(player.x * 0.05); 
-            ctx.fillRect(-player.w/2, -player.h/2, player.w, player.h);
-            ctx.restore();
-        } else {
-            ctx.fillRect(player.x, player.y, player.w, player.h);
+        // Jugador con efecto de daño
+        if (!gdInvulnerable || Math.floor(Date.now() / 150) % 2) {
+            ctx.fillStyle = "#00ff41";
+            if (!player.ground) {
+                ctx.save();
+                ctx.translate(player.x + player.w/2, player.y + player.h/2);
+                ctx.rotate(player.x * 0.05); 
+                ctx.fillRect(-player.w/2, -player.h/2, player.w, player.h);
+                ctx.restore();
+            } else {
+                ctx.fillRect(player.x, player.y, player.w, player.h);
+            }
         }
         
         ctx.restore();
 
-        // --- NUEVO: TEXTO DE VICTORIA (GG) ---
-        // Aparece justo al final, en la coordenada 44500
+        // Texto GG
         if (player.x > 44300) { 
             ctx.save();
             ctx.translate(-player.x + 150, 0); 
@@ -203,40 +195,29 @@ function initGeometryGD() {
             ctx.restore();
         }
 
-        // --- NUEVO: LÍNEA DE META (45,000 px = 2 min 5 seg) ---
+        // Victoria
         if (player.x > 45000) {
             window.gameActive = false; 
             mostrarGameOver("¡NIVEL COMPLETADO!"); 
             return; 
         }
 
-        // --- NUEVO: BARRA DE PROGRESO (Fija en pantalla) ---
+        // Barra de progreso
         const meta = 45000;
         let progreso = Math.min(Math.max(player.x / meta, 0), 1); 
-
         const anchoBarra = 300;
-        const altoBarra = 12;
         const posX = (canvas.width - anchoBarra) / 2; 
-        const posY = 20; 
 
         ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-        ctx.fillRect(posX, posY, anchoBarra, altoBarra);
-
+        ctx.fillRect(posX, 20, anchoBarra, 12);
         ctx.fillStyle = "#00ff41";
-        ctx.fillRect(posX, posY, anchoBarra * progreso, altoBarra);
-
+        ctx.fillRect(posX, 20, anchoBarra * progreso, 12);
         ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(posX, posY, anchoBarra, altoBarra);
-        // ----------------------------------------------------
+        ctx.strokeRect(posX, 20, anchoBarra, 12);
 
         window.animationId = requestAnimationFrame(loop);
     }
 
     buildLevel();
     loop();
-
-    // Dentro de geometry.js cuando el robot choca:
-let progreso = calcularPorcentajeCompletado(); // Tu lógica de porcentaje
-mostrarGameOver(progreso);
 }
