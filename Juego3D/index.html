@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>CS:GO A-Frame Arena Pro - Sister Location Edition</title>
+    
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+
+    <script src="js/shooter.js"></script>
+    <script src="js/laberinto.js"></script>
+    <script src="js/sl.js"></script> 
+    <script src="js/lobby.js"></script>
+    <script src="js/main.js"></script>
+    
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; }
+    </style>
+</head>
+<body>
+   
+    <a-scene physics="debug: false; gravity: 0; iterations: 20" renderer="colorManagement: true;">
+        <a-assets>
+            <img id="tex-arma" src="assets/arma.png" crossorigin="anonymous">
+            <img id="tex-enemigo" src="assets/enemigo.png" crossorigin="anonymous"> 
+            <img id="tex-suelo" src="assets/suelo.jpg" crossorigin="anonymous">
+            <img id="tex-container" src="assets/container.png" crossorigin="anonymous">
+            <img id="tex-ennard" src="assets/ennard.png" crossorigin="anonymous">
+            <img id="tex-mapa-sl" src="assets/edited-image.png" crossorigin="anonymous"> 
+            <img id="tex-ambient" src="assets/FNaF_SL_Final_Encounter_The_Office.png" crossorigin="anonymous"> 
+            <img id="tex-pared-sl" src="assets/pared.png" crossorigin="anonymous">
+
+            <audio id="snd-ambient-sl" src="assets/ambiet_office.mp3" preload="auto" loop="true"></audio>
+            <audio id="snd-dano" src="assets/dano.mp3" preload="auto"></audio>
+            <audio id="snd-disparo" src="assets/disparo.mp3" preload="auto"></audio>
+            <audio id="snd-puerta" src="assets/puerta.mp3" preload="auto"></audio>
+        </a-assets>
+
+        <a-entity id="player" 
+                  position="0 1.6 0" 
+                  movement-controls="speed: 0.3" 
+                  kinematic-body="radius: 0.6"> 
+            <a-entity camera look-controls position="0 0 0">
+                <a-cursor id="mouse-cursor" raycaster="objects: .clickable" color="lime" scale="0.5 0.5 0.5"></a-cursor>
+                
+                <a-plane id="player-hp-bg" position="-0.6 -0.4 -1" width="0.4" height="0.06" color="black" opacity="0.8" visible="false">
+                    <a-plane id="player-hp-bar" position="0 0 0.01" width="0.4" height="0.06" color="#00ff00"></a-plane>
+                </a-plane>
+
+                <a-text id="ammo-ui" value="15 / 15" position="0.4 -0.4 -1" color="white" width="2" visible="false"></a-text>
+                <a-image id="weapon" src="#tex-arma" position="0.4 -0.3 -0.5" width="0.5" height="0.5" visible="false"></a-image>
+            </a-entity>
+        </a-entity>
+
+        <a-entity id="lobby-container"></a-entity>
+        <a-entity id="game-container"></a-entity>
+
+    </a-scene>
+</body>
+</html>
